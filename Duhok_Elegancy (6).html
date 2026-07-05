@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Duhok Elegancy">
+<title>Duhok Elegancy</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--gold:#C9A84C;--gold-light:#E8C96A;--gold-dark:#8B6914;--black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;--dark3:#222222;--text:#F5EDD6;--text-muted:#9A8660;--border:rgba(201,168,76,0.25);--border-strong:rgba(201,168,76,0.5);}
+body{background:var(--black);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--black);}
+.header{background:var(--dark);border-bottom:0.5px solid var(--border-strong);padding:14px 16px 12px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
+.logo-circle{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold);background:var(--dark2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.header-title{font-family:"Playfair Display",serif;font-size:16px;color:var(--gold-light);font-weight:500;}
+.header-sub{font-size:10px;color:var(--text-muted);}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#5DCAA5;margin-right:auto;flex-shrink:0;}
+.sync-dot.off{background:#EF9F27;}
+.sync-dot.err{background:#E05555;}
+.rate-bar{background:var(--dark2);border-bottom:0.5px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.rate-info{flex:1;}
+.rate-label{font-size:10px;color:var(--text-muted);}
+.rate-val{font-size:14px;font-weight:500;color:var(--gold-light);}
+.rate-edit-btn{background:none;border:0.5px solid var(--border-strong);border-radius:6px;color:var(--gold);padding:5px 12px;font-size:12px;cursor:pointer;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--dark2);border:0.5px solid var(--border-strong);border-radius:16px;padding:24px;width:320px;max-width:90vw;}
+.modal-title{font-family:"Playfair Display",serif;font-size:16px;color:var(--gold-light);margin-bottom:12px;}
+.modal-note{font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.6;}
+.modal-row{display:flex;gap:8px;margin-top:12px;}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--dark);border-top:0.5px solid var(--border-strong);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0);}
+.nav-item{flex:1;padding:10px 4px 12px;text-align:center;cursor:pointer;border:none;background:none;color:var(--text-muted);font-size:10px;}
+.nav-item i{display:block;font-size:22px;margin-bottom:2px;}
+.nav-item.active{color:var(--gold);}
+.nav-item.active i{color:var(--gold-light);}
+.section{display:none;padding:14px 16px 100px;}
+.section.active{display:block;}
+.card{background:var(--dark2);border:0.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.card-title{font-size:13px;color:var(--gold);font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.ctype-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.ctype{padding:12px 8px;border:0.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;color:var(--text-muted);font-size:13px;background:var(--dark3);}
+.ctype.selected{border-color:var(--gold);color:var(--gold-light);background:rgba(201,168,76,0.08);}
+.ctype i{display:block;font-size:22px;margin-bottom:4px;}
+label{font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;margin-top:12px;}
+label:first-child{margin-top:0;}
+input,select,textarea{width:100%;background:var(--dark3);border:0.5px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-size:14px;font-family:inherit;-webkit-appearance:none;}
+input::placeholder{color:var(--text-muted);}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+select option{background:var(--dark3);color:var(--text);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.search-results{background:var(--dark3);border:0.5px solid var(--border-strong);border-radius:8px;margin-top:4px;display:none;max-height:200px;overflow-y:auto;}
+.search-item{padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border);}
+.search-item:last-child{border-bottom:none;}
+.search-item:active{background:rgba(201,168,76,0.08);}
+.search-item strong{color:var(--gold-light);}
+.search-item span{font-size:11px;color:var(--text-muted);}
+.filled-info{background:rgba(201,168,76,0.06);border:0.5px solid var(--border-strong);border-radius:8px;padding:10px 12px;margin-top:8px;display:none;}
+.fi-row{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;}
+.fi-label{color:var(--text-muted);}
+.fi-val{color:var(--gold-light);font-weight:500;}
+.price-result{background:rgba(201,168,76,0.06);border:0.5px solid var(--border-strong);border-radius:12px;padding:14px 16px;margin-top:12px;display:none;}
+.price-big{font-family:"Playfair Display",serif;font-size:32px;font-weight:600;color:var(--gold-light);letter-spacing:1px;}
+.price-break{font-size:11px;color:var(--text-muted);margin-top:4px;}
+.btn-gold{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-dark));border:none;border-radius:12px;color:var(--black);font-size:15px;font-weight:600;cursor:pointer;font-family:"Playfair Display",serif;letter-spacing:0.5px;}
+.btn-outline{padding:8px 16px;background:none;border:0.5px solid var(--border-strong);border-radius:8px;color:var(--gold);font-size:13px;cursor:pointer;}
+.btn-ghost{background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:4px;}
+.success-banner{background:rgba(201,168,76,0.08);border:0.5px solid var(--border-strong);border-radius:12px;padding:16px;margin-bottom:12px;display:none;}
+.success-title{font-family:"Playfair Display",serif;color:var(--gold-light);font-size:15px;margin-bottom:10px;}
+.success-btns{display:flex;gap:8px;}
+.success-btns button{flex:1;padding:10px;border-radius:10px;font-size:12px;cursor:pointer;border:0.5px solid var(--border-strong);background:none;color:var(--gold);}
+.success-btns .btn-same{background:rgba(201,168,76,0.12);}
+.order-card{background:var(--dark2);border:0.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;}
+.order-name{font-size:14px;font-weight:500;color:var(--gold-light);}
+.order-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.order-price{font-family:"Playfair Display",serif;font-size:15px;color:var(--gold);}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;margin-top:5px;}
+.b-pending{background:rgba(186,117,23,0.2);color:#EF9F27;}
+.b-confirmed{background:rgba(15,110,86,0.2);color:#5DCAA5;}
+.b-shipped{background:rgba(55,138,221,0.15);color:#85B7EB;}
+.b-delivered{background:rgba(99,153,34,0.2);color:#97C459;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat{background:var(--dark2);border:0.5px solid var(--border);border-radius:12px;padding:12px;}
+.stat-label{font-size:10px;color:var(--text-muted);margin-bottom:4px;}
+.stat-val{font-family:"Playfair Display",serif;font-size:18px;color:var(--gold-light);}
+.cust-card{background:var(--dark2);border:0.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.avatar{width:36px;height:36px;border-radius:50%;border:1px solid var(--gold);background:rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--gold);flex-shrink:0;}
+.filter-row{display:flex;gap:8px;margin-bottom:12px;}
+.filter-row input{flex:1;}
+.filter-row select{width:120px;}
+.history-panel{background:var(--dark3);border:0.5px solid var(--border-strong);border-radius:10px;padding:10px;margin-top:8px;display:none;}
+.history-item{font-size:12px;color:var(--text-muted);padding:5px 0;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;}
+.history-item:last-child{border-bottom:none;}
+.empty{text-align:center;color:var(--text-muted);padding:32px 16px;font-size:14px;}
+.empty i{font-size:36px;display:block;margin-bottom:8px;color:var(--gold-dark);}
+.loading{text-align:center;padding:20px;color:var(--text-muted);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo-circle">&#x265B;</div>
+    <div>
+      <div class="header-title">Duhok Elegancy</div>
+      <div class="header-sub" id="sync-label">جاري الاتصال...</div>
+    </div>
+    <div class="sync-dot off" id="sync-dot"></div>
+  </div>
+
+  <div class="rate-bar">
+    <div class="rate-info">
+      <div class="rate-label">سعر الصرف - سوق دهوك</div>
+      <div class="rate-val" id="rate-display">-</div>
+    </div>
+    <button class="rate-edit-btn" onclick="openRateModal()"><i class="ti ti-edit"></i> تعديل</button>
+  </div>
+
+  <div class="modal-overlay" id="rate-modal">
+    <div class="modal">
+      <div class="modal-title">&#x265B; تحديث سعر الصرف</div>
+      <div class="modal-note">أدخل سعر <strong style="color:var(--gold-light)">الدولار</strong> بالدينار وسعره بالليرة حسب سوق دهوك الحالي.</div>
+      <div class="row2">
+        <div><label>1$ = كم دينار؟</label><input type="number" id="usd-iqd-inp" placeholder="1490" oninput="prevRate()"></div>
+        <div><label>1$ = كم ليرة؟</label><input type="number" id="usd-try-inp" placeholder="34" oninput="prevRate()"></div>
+      </div>
+      <div id="rate-prev" style="font-size:13px;color:var(--gold-light);min-height:20px;margin-top:8px;"></div>
+      <div class="modal-row">
+        <button class="btn-outline" onclick="closeRateModal()" style="flex:1">إلغاء</button>
+        <button class="btn-gold" onclick="saveRate()" style="flex:2">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-order" class="section active">
+    <div class="success-banner" id="suc-banner">
+      <div class="success-title">&#x2713; تم حفظ الطلبية!</div>
+      <div class="success-btns">
+        <button class="btn-same" onclick="sameCust()"><i class="ti ti-user-check"></i><br>طلبية أخرى<br>لنفس العميل</button>
+        <button onclick="freshOrder()"><i class="ti ti-plus"></i><br>طلبية جديدة<br>لعميل آخر</button>
+      </div>
+    </div>
+    <div id="order-form">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-user"></i>نوع العميل</div>
+        <div class="ctype-grid">
+          <div class="ctype selected" id="ctype-old" onclick="selType('old')"><i class="ti ti-user-check"></i>عميل قديم</div>
+          <div class="ctype" id="ctype-new" onclick="selType('new')"><i class="ti ti-user-plus"></i>عميل جديد</div>
+        </div>
+        <div id="old-sec">
+          <label>ابحث بالاسم أو الإنستقرام</label>
+          <input type="search" id="search-inp" placeholder="اكتب للبحث..." oninput="doSearch(this.value)" autocomplete="off">
+          <div class="search-results" id="search-res"></div>
+          <div class="filled-info" id="fi">
+            <div class="fi-row">
+              <div><span class="fi-label">الاسم </span><span class="fi-val" id="fi-name"></span></div>
+              <div><span class="fi-label">انستقرام </span><span class="fi-val" id="fi-ig"></span></div>
+              <div><span class="fi-label">هاتف </span><span class="fi-val" id="fi-ph"></span></div>
+              <div><span class="fi-label">مكان </span><span class="fi-val" id="fi-loc"></span></div>
+            </div>
+            <div id="hist-toggle" style="margin-top:8px;display:none">
+              <button class="btn-ghost" onclick="toggleHist()"><i class="ti ti-history"></i> <span id="hist-lbl">الطلبيات السابقة</span></button>
+              <div class="history-panel" id="hist-panel"></div>
+            </div>
+          </div>
+        </div>
+        <div id="new-sec" style="display:none">
+          <div class="row2">
+            <div><label>الاسم</label><input id="nc-name" placeholder="الاسم الكامل"></div>
+            <div><label>انستقرام</label><input id="nc-ig" placeholder="@username"></div>
+          </div>
+          <div class="row2">
+            <div><label>هاتف</label><input id="nc-ph" placeholder="07..." type="tel"></div>
+            <div><label>مكان</label><input id="nc-loc" placeholder="دهوك / زاخو..."></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-shopping-bag"></i>تفاصيل المنتج</div>
+        <label>اسم / وصف المنتج</label>
+        <input id="prod-name" placeholder="مثال: فستان، طاولة...">
+        <label>رابط المنتج - اختياري</label>
+        <input id="prod-link" placeholder="https://www.trendyol.com/..." type="url">
+        <label>اسم البراند - اختياري</label>
+        <input id="prod-brand" placeholder="مثال: Zara، LC Waikiki، DeFacto..." oninput="filterBrands(this.value)" autocomplete="off">
+        <label>العدد / الكمية</label>
+        <input id="prod-qty" type="number" placeholder="1" min="1" value="1">
+        <div id="brand-suggestions" style="background:var(--dark3);border:0.5px solid var(--border-strong);border-radius:8px;margin-top:4px;display:none;max-height:160px;overflow-y:auto;"></div>
+        <div class="row2" style="margin-top:12px">
+          <div><label>سعر الليرة (TL)</label><input id="price-tl" type="number" placeholder="0" oninput="calc()"></div>
+          <div><label>هامش الربح (IQD)</label><input id="profit" type="number" placeholder="" oninput="calc()"></div>
+        </div>
+        <div id="usd-preview" style="display:none;font-size:12px;color:var(--text-muted);margin-top:6px">
+          السعر بالدولار: <span id="price-usd" style="color:var(--gold-light);font-weight:500"></span>
+        </div>
+        <label>ملاحظة الربح - اختياري</label>
+        <input id="profit-note" placeholder="مثال: ثقيل - شحن إضافي">
+        <div class="price-result" id="price-box">
+          <div style="font-size:11px;color:var(--text-muted)">السعر النهائي بالدينار</div>
+          <div class="price-big" id="price-iqd">-</div>
+          <div class="price-break" id="price-break"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-clipboard-list"></i>حالة الطلبية</div>
+        <select id="o-status">
+          <option value="pending">قيد الانتظار</option>
+          <option value="confirmed">مؤكدة</option>
+          <option value="shipped">مشحونة</option>
+          <option value="delivered">مسلمة</option>
+        </select>
+        <label>ملاحظات - اختياري</label>
+        <textarea id="o-notes" rows="2" placeholder="أي ملاحظات..."></textarea>
+      </div>
+      <button class="btn-gold" onclick="saveOrder()">&#x265B; حفظ الطلبية</button>
+      <div style="height:8px"></div>
+    </div>
+  </div>
+
+  <div id="sec-orders" class="section">
+    <div class="stat-grid" id="stats"></div>
+    <div class="filter-row">
+      <input id="o-search" placeholder="بحث بالاسم..." oninput="renderOrders()">
+      <select id="o-filter" onchange="renderOrders()">
+        <option value="">الكل</option>
+        <option value="pending">انتظار</option>
+        <option value="confirmed">مؤكدة</option>
+        <option value="shipped">مشحونة</option>
+        <option value="delivered">مسلمة</option>
+      </select>
+    </div>
+    <button class="btn-outline" onclick="exportXL()" style="margin-bottom:12px;width:100%"><i class="ti ti-download"></i> تحميل Excel</button>
+    <div id="orders-list"><div class="loading">جاري التحميل...</div></div>
+  </div>
+
+  <div id="sec-customers" class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:13px;color:var(--text-muted)" id="cust-count">0 عميل</span>
+      <label class="btn-outline" style="cursor:pointer"><i class="ti ti-upload"></i> رفع Excel
+        <input type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="importXL(this)">
+      </label>
+    </div>
+    <div id="cust-list"></div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-order" onclick="showSec('order')"><i class="ti ti-plus"></i>طلبية</button>
+    <button class="nav-item" id="nav-orders" onclick="showSec('orders')"><i class="ti ti-list"></i>الطلبيات</button>
+    <button class="nav-item" id="nav-customers" onclick="showSec('customers')"><i class="ti ti-users"></i>العملاء</button>
+  </nav>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGgd_foQe48nLSnMzowG_yQpxxdE5zJew",
+  authDomain: "duhok-elegancy.firebaseapp.com",
+  projectId: "duhok-elegancy",
+  storageBucket: "duhok-elegancy.firebasestorage.app",
+  messagingSenderId: "537646867270",
+  appId: "1:537646867270:web:95c8236d7602710791bb47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const BUILT_IN = [{"name": "Heve Baker", "ig": "Heve.Bakr", "phone": "7701462908", "location": "Slemanye/Gunde almani 2 villa 56"}, {"name": "Iman Xal", "ig": "Miss-Iman", "phone": "7507443898", "location": "Duhok/Maziland"}, {"name": "Ronak Xal", "ig": "Ronak-xal", "phone": "7507559444", "location": "Duhok/Dabin tower"}, {"name": "Bizav", "ig": "", "phone": "", "location": ""}, {"name": "Maryam barwari", "ig": "maryam", "phone": "7507906868", "location": "Roj city A2 62"}, {"name": "Kevi Duski", "ig": "", "phone": "7504713192", "location": "Duhok-KRO"}, {"name": "Maral Mzire", "ig": "Maral_Mzire", "phone": "7504696212", "location": "Gre bASE"}, {"name": "Neroj Duski", "ig": "Neroj_Duski", "phone": "7504588347", "location": "Def meshtelen Zeriland"}, {"name": "Keje Duski", "ig": "Kaje_Duski", "phone": "7504525333", "location": "Duhok-MRF"}, {"name": "Kani Zakiya", "ig": "Kani_zakiya", "phone": "7508496699", "location": "Duhok/Roj City"}, {"name": "Harki_79", "ig": "Harki_79", "phone": "7504815014", "location": "Hawler -MRF"}, {"name": "Jowan Xal", "ig": "Jowan_Duski", "phone": "7504509357", "location": "Dabin"}, {"name": "Lole", "ig": "Lole", "phone": "7504204774", "location": "Duhok"}, {"name": "Shanel Dilshad", "ig": "Shnel", "phone": "", "location": "Duhok"}, {"name": "Daika Bzav", "ig": "Daika Bzav", "phone": "", "location": "Duhok"}, {"name": "Mina", "ig": "Meena", "phone": "7508377657", "location": "7ey 3eskeri"}, {"name": "Lami Lawi", "ig": "Lami_Lawi", "phone": "7504588030", "location": "Shqet katoo"}, {"name": "Helan Hassan", "ig": "Helan_Hasan", "phone": "7510467785", "location": "KRO"}, {"name": "Pela", "ig": "Pela.atr", "phone": "7515460067", "location": "gre sor"}, {"name": "Bita KB", "ig": "Bita_KB", "phone": "7504588349", "location": "Def dawra korek"}, {"name": "Sabi7a Duski", "ig": "SabiHa_Duski", "phone": "7504713192", "location": "Shaxke"}, {"name": "Renas Alkurdi", "ig": "Rrenas_Alkurdi", "phone": "7507430718", "location": "Duhok-met3am geverke"}, {"name": "bafreen xal", "ig": "bafreen xal", "phone": "7515986060", "location": "Roj city"}, {"name": "Niroj bandawar", "ig": "niroj_bandawar", "phone": "", "location": "Duhok"}, {"name": "Tavrin Zebare", "ig": "Tavrin_Zebari", "phone": "7504460604", "location": "Duhok_Pesht masya shando"}, {"name": "Zeen Duski", "ig": "Zin_Duski", "phone": "7502319898", "location": "Mala dewali"}, {"name": "Kevi Haval", "ig": "Kevi Haval", "phone": "7504598624", "location": "Masika 2"}, {"name": "Jine Xal", "ig": "Jin_Duski", "phone": "", "location": "Duhok"}, {"name": "Linda Shawqi", "ig": "Linda_Shawqi", "phone": "7501013492", "location": "Hawler"}, {"name": "Binay Ako", "ig": "Binay_Ako", "phone": "7504455495", "location": "Mala Dewali"}, {"name": "Aya Sarkaft", "ig": "Aya-Duski", "phone": "7504564442", "location": "Duhok Zari land"}, {"name": "D.Hozan", "ig": "D_Hozan", "phone": "7504606015", "location": "Evro City"}, {"name": "Nova Waheed", "ig": "Nova_Wahid", "phone": "7514947829", "location": "zerka"}, {"name": "Karwan xal", "ig": "karwan_Duski", "phone": "", "location": "Duhok"}, {"name": "Roje Duski", "ig": "Roje_Duski", "phone": "", "location": "Shqet katoo"}, {"name": "kavin sabri", "ig": "kavin", "phone": "", "location": "duhok"}, {"name": "Aveen Sabri", "ig": "Aveen Sabri", "phone": "7502783443", "location": "Duhok"}, {"name": "Duski Guhdar", "ig": "Duski_Guhdar", "phone": "7504560545", "location": "Mala Dewali"}, {"name": "Ahmed Serdar", "ig": "Ahmed_Serdar", "phone": "7507572557", "location": "Duhok-Malta"}, {"name": "Sadeeq hasan agha", "ig": "Sadeeq_zebaree", "phone": "7503386933", "location": "Roviya"}, {"name": "Mina Ater", "ig": "Mina_atr", "phone": "7515460067", "location": "Duhok/Gre  base"}, {"name": "Amal Jiran", "ig": "Amal_Nerway", "phone": "", "location": "Roj city A2 61"}, {"name": "Niyan Dosky", "ig": "Niyan Dosky", "phone": "7502603663", "location": "Duhok/ nk mashtela"}, {"name": "Xishka Pinare", "ig": "Thefairyfall", "phone": "7507279969", "location": "Gundi Faranci -Villa"}, {"name": "Niroj Mam", "ig": "Niroj-Mam", "phone": "7504597018", "location": "Duhok/sheqet Katoo"}, {"name": "Gelas_Duski", "ig": "Gelas_Duski", "phone": "", "location": "Mala Dewali"}, {"name": "Zeynab saeed", "ig": "Zeynab_Saeed", "phone": "7504243168", "location": "Zaxo"}, {"name": "Rojeen Lole", "ig": "Rojeen_Lole", "phone": "", "location": "Duhok"}, {"name": "Hozan Xal", "ig": "Hozan_Duski", "phone": "", "location": "Erbil"}, {"name": "Nazi Sherwani", "ig": "nazi_sherwani", "phone": "7503551312", "location": "hawler gunde kori"}, {"name": "Rend Balatay", "ig": "rand_Kavin", "phone": "", "location": "Duhok"}, {"name": "Nar Fita", "ig": "Nar Fit", "phone": "7504406710", "location": "Duhok-Besere"}, {"name": "Narmeen Zebari", "ig": "Narmin Zebari", "phone": "7504466438", "location": "Duhok-Maseef"}, {"name": "Chiman Zebari", "ig": "Chiman_Zebari", "phone": "7504097820", "location": "Zaxo-Dar Hozan"}, {"name": "Xamlin Berwari", "ig": "Xamlin_Berwari", "phone": "", "location": "Duhok-Jam3eye"}, {"name": "Rand Berwari", "ig": "Rand_Berwari", "phone": "7507831838", "location": "KRO"}, {"name": "Peyman kovan", "ig": "Peyman_Mzire", "phone": "", "location": "Duhok"}, {"name": "Dilan Duski", "ig": "Dilan_Duski", "phone": "7504889799", "location": "Duhok"}, {"name": "Wan Sadiq", "ig": "Wan_Sadiq", "phone": "7505581551", "location": "Kro/ Def jam3a jodi"}, {"name": "Soleen Akray", "ig": "Solin_Akray", "phone": "7508841000", "location": "Gundi Faranci -Villa"}, {"name": "Awni Xal", "ig": "Awni_Duski", "phone": "", "location": "Duhok"}, {"name": "Roje Xishk", "ig": "Roje_Xishk", "phone": "", "location": "Duhok"}, {"name": "Jihad Harki", "ig": "Jehad_Harki", "phone": "754454530", "location": "Hawler"}, {"name": "Alaa Jiyan", "ig": "Alaa_Berwari", "phone": "7503725737", "location": "Duhok"}, {"name": "sipan ageed", "ig": "sipan_Ageed", "phone": "7514004646", "location": "Def Jam3a Judi"}, {"name": "Mohammed Kocher", "ig": "Muhamed_Kucher", "phone": "7504832123", "location": "Mqabel Rexos"}, {"name": "Rozan Qasim", "ig": "Rozan_Qasim", "phone": "7504807686", "location": "Duhok/Shqet Katoo"}, {"name": "Jowan Fehmi", "ig": "Jwan_Fehmi", "phone": "7504805233", "location": "Kayar"}, {"name": "Heaven997", "ig": "Dalia_Duski", "phone": "7502691999", "location": "Grebase"}, {"name": "Z Kurdi", "ig": "Z_Kurdi", "phone": "7503883748-7504794817", "location": "Bardarash-Dolijan-market haji naif"}, {"name": "Roje Xal", "ig": "Roje_Xal", "phone": "", "location": "Shqet Ahmade xane"}, {"name": "Naz Mayi", "ig": "Naz_Mayi", "phone": "7504644949", "location": "New Zakho"}, {"name": "Herro Duski", "ig": "Hero_Duski", "phone": "7514400151", "location": "Mala dewali"}, {"name": "Sozan Fehmi", "ig": "Sozan_Duski", "phone": "", "location": "Piromara"}, {"name": "Bahoz", "ig": "cesc_bahoz", "phone": "7504922074", "location": "Duhok_Roj city"}, {"name": "Chia Sabri", "ig": "Chia.Sabri", "phone": "7504045810", "location": "Roj city A2 62"}, {"name": "Suzan Xall", "ig": "Suzan_Xall", "phone": "7504551270", "location": "Evro city"}, {"name": "Mobin TP", "ig": "Mobin.tp", "phone": "7504726844", "location": "Gre Basse"}, {"name": "Jivan Sabri", "ig": "Jivan_Sabri", "phone": "", "location": "Duhok"}, {"name": "Bizav Berwari", "ig": "Bizav_Berwar", "phone": "", "location": "Duhok"}, {"name": "Duhoki6679", "ig": "Duhoki6679", "phone": "7514402799", "location": "Duhok-Shaxke"}, {"name": "Pari May", "ig": "Peri_Mayi", "phone": "7503386335", "location": "KRO-Jiyan"}, {"name": "Huda", "ig": "disha _Kani", "phone": "7502122364", "location": "Duhok"}, {"name": "Lolan Duski", "ig": "Lolan_Duski", "phone": "7504589776", "location": "Gre base"}, {"name": "S&H", "ig": "h_ashkim_s", "phone": "7504594228", "location": "zakho-pesht panzinxana dalal"}, {"name": "Shan", "ig": "Bika 7azem", "phone": "7504933222", "location": "Mazi Land"}, {"name": "Pinar N. Abdulah", "ig": "Pinar_N.Abdulah", "phone": "7507349449", "location": "Gundi Faranci -Villa"}, {"name": "Rand Bayar", "ig": "Rand_Bayar", "phone": "", "location": "Grebase"}, {"name": "Hindav Nizar", "ig": "Hindav_Jaafar", "phone": "", "location": "Batifa"}, {"name": "Suzan Xal", "ig": "Suzan_xal", "phone": "7504551270", "location": "Shqet Xani"}, {"name": "Vinwar Bamerni", "ig": "Vinwar_Bamerni", "phone": "7507172003", "location": "Duhok"}, {"name": "Heroo Anwar", "ig": "Hero_Anwar", "phone": "7503745503", "location": "Hawler"}, {"name": "Kave Duski", "ig": "kave_Duski", "phone": "7504713192", "location": "KRO"}, {"name": "Sherzad Ayenda", "ig": "Sherzad_Akray", "phone": "7704486020", "location": "Hawler"}, {"name": "Perin May", "ig": "Perin_Mayi", "phone": "7503386335", "location": "KRO-Jiyan"}, {"name": "Kurdistan Sabri", "ig": "Kurdistan_Sabri", "phone": "", "location": "Duhok"}, {"name": "Shan Hishyar", "ig": "Shan_Hishyar", "phone": "7503152300", "location": "Zrka"}, {"name": "Lawi-6", "ig": "Lawi-6", "phone": "7504727215", "location": "Duhok/zeriland"}, {"name": "Zainab Saeed Abdi", "ig": "Zinab_Saeed", "phone": "7504243165", "location": "zakho"}, {"name": "Bilan Herki", "ig": "Bilan_Herki", "phone": "7504636060", "location": "Erbil"}, {"name": "Daxaz Kucher", "ig": "Daxaz_Kucher", "phone": "7507179156", "location": "Zaxo-Dream City"}, {"name": "Rana", "ig": "Rana", "phone": "7511439078", "location": "Panzinxana bnavi 1"}, {"name": "Payman", "ig": "Payman", "phone": "7508662358", "location": "Duhok"}, {"name": "Chiman", "ig": "chiman85", "phone": "7504844853", "location": "Roj City"}, {"name": "Dleen Xalat", "ig": "Dleen_Doski", "phone": "", "location": "Mersin tower"}, {"name": "English Price", "ig": "English_price", "phone": "7507284155", "location": "Zakho/Shahidan"}, {"name": "D-Sharafani", "ig": "D_Sharafani", "phone": "7504011590", "location": "Duhok"}, {"name": "Axink Safadin", "ig": "Axink_H_Safaidn", "phone": "", "location": "Masika 2"}, {"name": "Gelas Dewali", "ig": "Gelas_Dewali", "phone": "", "location": "Mala Dewali"}, {"name": "Halat Faxri", "ig": "Halat_Faxri", "phone": "", "location": "Duhok"}, {"name": "Hajar Nizar", "ig": "Hajar_Rekani", "phone": "", "location": "Duhok"}, {"name": "BBA.X00", "ig": "BBA_X00", "phone": "7503669391", "location": "Massif"}, {"name": "Younis Rasheed", "ig": "Younis_Rasheed", "phone": "7503263483", "location": "Grebase"}, {"name": "Hemo Hujavay", "ig": "Hemo_Hujavay", "phone": "7504822444", "location": "Duhok"}, {"name": "Muhammed Berwari", "ig": "Muhamed_Berwari", "phone": "7504229558", "location": "Duhok"}, {"name": "Rawan Kovli", "ig": "Rawan_Kovli", "phone": "7508570788", "location": "Gre basse"}, {"name": "Sidra Smo", "ig": "Sidra_Smo", "phone": "7502437934", "location": "Zerka"}, {"name": "BitaKB", "ig": "BitaKB", "phone": "7504588349", "location": "Dawra Korek"}, {"name": "1Bahoz", "ig": "1Bahoz", "phone": "7504780222", "location": "Duhok/Sa7a mazi"}, {"name": "Hozan Mzire", "ig": "Hozan_Mzire", "phone": "7504123747", "location": "sa7a mazi"}, {"name": "Fouad Dilxaz", "ig": "Fouad_Dilxaz", "phone": "7501269695", "location": "Dream City"}, {"name": "daliya harki", "ig": "Dalya_Harki", "phone": "7504581616", "location": "Hawler"}, {"name": "Chiman Musa", "ig": "Chima_Musa", "phone": "7504844853", "location": "Roj City"}, {"name": "Bahoz-AA", "ig": "Bahoz-AA", "phone": "7504780222", "location": "sahaa mazi"}, {"name": "Asma Berwari", "ig": "Asma_Barwari", "phone": "7512349199", "location": "Duhok/KRO"}, {"name": "Banaz Berwari", "ig": "Banaz_Berwari", "phone": "7504726844", "location": ""}, {"name": "Set Jihan", "ig": "Sit Jihan", "phone": "", "location": "Jma3eye"}, {"name": "Dlveen Samir", "ig": "Dlveen_Samir", "phone": "", "location": "duhok"}, {"name": "Suzan Fehmi", "ig": "Suzan_Fehmi", "phone": "", "location": "Peromara"}, {"name": "Hind Waleed", "ig": "Hind_Waleed", "phone": "7504432705", "location": "Zakho-Shahida"}, {"name": "Kajal Xal", "ig": "Kajal_Xal", "phone": "7504504560", "location": "Dabin"}, {"name": "Doman Roman", "ig": "Doman_Roman", "phone": "7504566357", "location": "roviya-Mat3am Nawroz"}, {"name": "Shale Amedi", "ig": "Amedi_Shal", "phone": "7503285178", "location": "KRO"}, {"name": "Laila Ibrahim", "ig": "Laila_Ibrahim92", "phone": "7507095555", "location": "Mqabel Rexos"}, {"name": "Silav Brifke", "ig": "Silav_Brifke", "phone": "7507255885", "location": "KRO"}, {"name": "Kech Aghayi", "ig": "Kecha_Aghay", "phone": "7514606559", "location": "KRO"}, {"name": "Siber Mzire", "ig": "Siber_Mzire", "phone": "7504458873", "location": "Mazi Land"}, {"name": "Rama Duski", "ig": "Rama_Duski", "phone": "7502939333", "location": "Duhok"}, {"name": "Roje Mayi", "ig": "Yasmina", "phone": "7503761562", "location": "Erbil"}, {"name": "Zaxo Kurd", "ig": "Zaxo Kurd", "phone": "7514848545", "location": "7ey el3askare"}, {"name": "Naz Hassan", "ig": "Naz_May", "phone": "7504644949", "location": "Def Tanka -Mala xayale"}, {"name": "BA Harki", "ig": "BA_HARKI", "phone": "7509585852", "location": "Hawler"}, {"name": "Aween Mohamad", "ig": "Awin_Mohammed", "phone": "7701440034", "location": "Sulimanye-Ali Naci"}, {"name": "Kajeen Mat", "ig": "Kajin_Slevanay", "phone": "7507388802", "location": "Duhok"}, {"name": "Chenin Mayi", "ig": "Chenin May", "phone": "7504588353", "location": "Evro City"}, {"name": "Meryam Doski", "ig": "Meryam_Doski", "phone": "7507182112", "location": "def jam3a azadi"}, {"name": "B Duski", "ig": "B.Duski", "phone": "7502939333", "location": "Duhok"}, {"name": "Gara Haval", "ig": "Gara ghafour", "phone": "", "location": "Nzarke"}, {"name": "Zainab Saeed", "ig": "Zainab_Saeed", "phone": "7504243165", "location": "Zkho"}, {"name": "Bareen Jamal", "ig": "Bareen_Jamal", "phone": "7507350467", "location": "Duhok-KRO"}, {"name": "Nors Point", "ig": "Norsviwopoint", "phone": "7509209990", "location": "Duhok-KRO"}, {"name": "Bag Berwari", "ig": "k bag.berwari", "phone": "7503172346", "location": "zeri land-chia market"}, {"name": "Sherzad Elyas", "ig": "Sherzad_elyas", "phone": "7504887798", "location": "KRO"}, {"name": "Shina Duski", "ig": "Shina_K_Duski", "phone": "7507409229", "location": "Grebasse"}, {"name": "Peri Mayi", "ig": "Peri_Mayi", "phone": "7503386335", "location": "Def Xasta Jiyan"}, {"name": "Sazin Balatay", "ig": "Sazin", "phone": "7512458470", "location": "Duhok"}, {"name": "Helan", "ig": "Helan", "phone": "7518682716", "location": "Def Jam3a Judi"}, {"name": "Kcha Agha", "ig": "Kcha_Agha0", "phone": "7514606559", "location": "Duhok-KRO"}, {"name": "Manal Mustafa", "ig": "Manal_Mustafa", "phone": "7504593680", "location": "KRO"}, {"name": "Aveen barwari", "ig": "Aveen_Barwari", "phone": "7504573990", "location": "Zeri land mqabel home heven"}, {"name": "Solin Akray", "ig": "Solin_Akray", "phone": "7508481000", "location": "Gunde farance"}, {"name": "Mohammed Hojavay", "ig": "Hamo_Hojavay", "phone": "7504999398", "location": "Duhok"}, {"name": "A Duski", "ig": "a_Doskiiiii", "phone": "7502939333", "location": "Zeri land"}, {"name": "cheman haval", "ig": "chman_haval", "phone": "7502158685", "location": "frinch village"}, {"name": "Payman Atroshi", "ig": "Payman_Atroshi", "phone": "7504508008", "location": "Gashtiyar"}, {"name": "Chalang Xalat", "ig": "chalang_Xalat", "phone": "7502166776", "location": "Erbil"}, {"name": "Durha", "ig": "Durha12", "phone": "7504921338", "location": "Erbil"}, {"name": "Peyman Afandi", "ig": "Peyman_Afandi", "phone": "7507078973", "location": "Roj City"}, {"name": "Shreen Kamal", "ig": "Shreen mzire", "phone": "7507768088", "location": "Roj City"}, {"name": "Hejin Zebari", "ig": "Hejin_Zebari", "phone": "7706607383", "location": "Rovia-MET3AM NAWROZ"}, {"name": "Kamyar Harki", "ig": "Kamyar_Harki", "phone": "7506088946", "location": "Hawler"}, {"name": "H_Ashkim-S", "ig": "H_Ashkim-S", "phone": "7504594228", "location": "zaxo pesht panzinxana dalal"}, {"name": "Jowan Muhammed", "ig": "Jowan Muhammed", "phone": "7504725959", "location": "KRO"}, {"name": "Pel Duski", "ig": "Pel_Duski", "phone": "7508955606", "location": "Pesht Zeri Land"}, {"name": "Ramziya Rekani", "ig": "Ramziya_Rekani", "phone": "7504589723", "location": "Mala Dewali"}, {"name": "Pelin Zebari", "ig": "Pelin_Zebari", "phone": "7504873245", "location": "Akre"}, {"name": "Darya Duski", "ig": "Darya_Duski", "phone": "7507744565", "location": "KRO"}, {"name": "Siber Jarjis", "ig": "Siber_Mzire", "phone": "7504458873", "location": "Shqet -Mazi Land"}, {"name": "bzav", "ig": "bzav", "phone": "", "location": "duhok"}, {"name": "Naz Wali", "ig": "Naz_Wali", "phone": "7504073289", "location": "Pesht berhav"}, {"name": "babe bzave", "ig": "babe bzave", "phone": "7504501199", "location": "duhok"}, {"name": "Deren Duski", "ig": "", "phone": "7504725959", "location": "Duhok/KRO def Judi"}, {"name": "Heaven97", "ig": "", "phone": "7504611757", "location": "Duhok-KRO"}, {"name": "Haroojy", "ig": "", "phone": "7515413733", "location": "NEW Zakho"}, {"name": "Nilsen WFP", "ig": "", "phone": "", "location": "Duhok"}, {"name": "Shan M.Hassan", "ig": "", "phone": "7504933222", "location": "Mazi Land"}, {"name": "Sipan I Ageed", "ig": "", "phone": "7514004646", "location": "Def jam3a judi"}, {"name": "Dunya Mat", "ig": "", "phone": "7509160215", "location": "def meshyala"}, {"name": "Jihan Ali", "ig": "", "phone": "7504571217", "location": "Duhok-Pesht Sade gre qasroka"}, {"name": "Mohamad Berwari", "ig": "", "phone": "7504229558", "location": "duhok"}, {"name": "Lina Seliv", "ig": "", "phone": "7504511436", "location": "Masika 2"}, {"name": "Helan Duski", "ig": "", "phone": "7504725959", "location": "Def jam3a judi"}, {"name": "Lolan Doski", "ig": "", "phone": "7504589776", "location": "Duhok/ Gre Basse"}, {"name": "Suzan-Qasim", "ig": "", "phone": "7507334453", "location": "Duhok/Shqen Katoo"}, {"name": "Aveen Berwari", "ig": "", "phone": "7504571203", "location": "Duhok"}, {"name": "Jowan Mzire", "ig": "", "phone": "7508965709", "location": "Duhok-Bntika"}];
+let customers = JSON.parse(localStorage.getItem('de_c') || 'null');
+if(!customers){ customers = [...BUILT_IN]; localStorage.setItem('de_c', JSON.stringify(customers)); }
+
+let orders = [];
+let rateIQD = parseFloat(localStorage.getItem('de_iqd') || '0');
+let rateTRY = parseFloat(localStorage.getItem('de_try') || '0');
+let selCust = null, ctype = 'old', lastCust = null, histOpen = false;
+let syncOk = false;
+
+// --- Sync status ---
+function setSyncStatus(status) {
+  const dot = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  if(status === 'ok') { dot.className='sync-dot'; label.textContent='متزامن مع كل الأجهزة ✓'; syncOk=true; }
+  else if(status === 'connecting') { dot.className='sync-dot off'; label.textContent='جاري الاتصال...'; }
+  else { dot.className='sync-dot err'; label.textContent='خطأ في الاتصال'; }
+}
+
+// --- Rate ---
+function getR(){ return (rateIQD && rateTRY) ? rateIQD / rateTRY : null; }
+function updateRateDisplay(){
+  const r = getR(); const el = document.getElementById('rate-display');
+  if(r){ el.textContent='1 TL = '+Math.round(r)+' IQD  (1$='+Math.round(rateIQD)+'IQD / 1$='+Math.round(rateTRY)+'TL)'; el.style.color='var(--gold-light)'; }
+  else { el.textContent='لم يحدد - اضغط تعديل'; el.style.color='#EF9F27'; }
+}
+window.openRateModal = function(){ if(rateIQD) document.getElementById('usd-iqd-inp').value=rateIQD; if(rateTRY) document.getElementById('usd-try-inp').value=rateTRY; prevRate(); document.getElementById('rate-modal').classList.add('open'); }
+window.closeRateModal = function(){ document.getElementById('rate-modal').classList.remove('open'); }
+window.prevRate = function(){ const i=parseFloat(document.getElementById('usd-iqd-inp').value)||0; const t=parseFloat(document.getElementById('usd-try-inp').value)||0; document.getElementById('rate-prev').textContent=(i&&t)?'1 TL = '+Math.round(i/t)+' IQD':''; }
+window.saveRate = async function(){
+  const i=parseFloat(document.getElementById('usd-iqd-inp').value); const t=parseFloat(document.getElementById('usd-try-inp').value);
+  if(!i||!t){alert('ادخل كلا السعرين');return;}
+  rateIQD=i; rateTRY=t;
+  localStorage.setItem('de_iqd',i); localStorage.setItem('de_try',t);
+  // Save rate to Firestore so all devices get it
+  try{ await setDoc(doc(db,'settings','rate'), {iqd:i, try:t, updated: new Date().toISOString()}); } catch(e){}
+  updateRateDisplay(); closeRateModal(); calc();
+}
+
+// --- Listen to rate changes from other devices ---
+onSnapshot(doc(db,'settings','rate'), (snap) => {
+  if(snap.exists()){
+    const d = snap.data();
+    rateIQD = d.iqd; rateTRY = d.try;
+    localStorage.setItem('de_iqd', rateIQD); localStorage.setItem('de_try', rateTRY);
+    updateRateDisplay(); calc();
+  }
+});
+
+// --- Firestore orders listener (REAL-TIME) ---
+const ordersQ = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+onSnapshot(ordersQ, (snap) => {
+  orders = snap.docs.map(d => ({...d.data(), _id: d.id}));
+  setSyncStatus('ok');
+  const sec = document.getElementById('sec-orders');
+  if(sec.classList.contains('active')) renderOrders();
+}, (err) => { setSyncStatus('err'); console.error(err); });
+
+// --- Calc ---
+window.calc = function(){
+  const tl=parseFloat(document.getElementById('price-tl').value)||0;
+  const pr=parseFloat(document.getElementById('profit').value)||0;
+  const box=document.getElementById('price-box'); const r=getR();
+  if(!tl||!r){box.style.display='none';document.getElementById('usd-preview').style.display='none';return;}
+  const base=tl*r; const total=base+pr;
+  box.style.display='block';
+  document.getElementById('price-iqd').textContent=Math.round(total).toLocaleString('en-US')+' IQD';
+  document.getElementById('price-break').textContent='تحويل: '+Math.round(base).toLocaleString('en-US')+(pr?' + ربح: '+Math.round(pr).toLocaleString('en-US'):'');
+  // USD price
+  if(rateIQD){
+    const usd = total / rateIQD;
+    document.getElementById('price-usd').textContent = '$'+usd.toFixed(2);
+    document.getElementById('usd-preview').style.display='block';
+  }
+}
+
+// --- Navigation ---
+window.showSec = function(s){
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('sec-'+s).classList.add('active');
+  document.getElementById('nav-'+s).classList.add('active');
+  if(s==='orders') renderOrders();
+  if(s==='customers') renderCustomers();
+}
+
+// --- Customer type ---
+window.selType = function(t){
+  ctype=t; selCust=null;
+  document.getElementById('ctype-old').classList.toggle('selected',t==='old');
+  document.getElementById('ctype-new').classList.toggle('selected',t==='new');
+  document.getElementById('old-sec').style.display=t==='old'?'block':'none';
+  document.getElementById('new-sec').style.display=t==='new'?'block':'none';
+  document.getElementById('fi').style.display='none';
+  document.getElementById('search-inp').value='';
+  document.getElementById('search-res').style.display='none';
+}
+
+// --- Search ---
+window.doSearch = function(q){
+  const el=document.getElementById('search-res');
+  if(!q){el.style.display='none';return;}
+  const m=customers.filter(c=>(c.name||'').toLowerCase().includes(q.toLowerCase())||(c.ig||'').toLowerCase().includes(q.toLowerCase())||(c.phone||'').includes(q)).slice(0,10);
+  if(!m.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML=m.map(c=>`<div class="search-item" onclick="pickCust(${customers.indexOf(c)})"><strong>${c.name}</strong><br><span>${c.ig||''} - ${c.phone||''} - ${c.location||''}</span></div>`).join('');
+}
+
+window.pickCust = function(i){
+  selCust=customers[i];
+  document.getElementById('search-inp').value=selCust.name;
+  document.getElementById('search-res').style.display='none';
+  document.getElementById('fi').style.display='block';
+  document.getElementById('fi-name').textContent=selCust.name||'-';
+  document.getElementById('fi-ig').textContent=selCust.ig||'-';
+  document.getElementById('fi-ph').textContent=selCust.phone||'-';
+  document.getElementById('fi-loc').textContent=selCust.location||'-';
+  const prev=orders.filter(o=>o.customer?.name===selCust.name);
+  const tog=document.getElementById('hist-toggle');
+  tog.style.display=prev.length?'block':'none';
+  histOpen=false;
+  document.getElementById('hist-lbl').textContent='الطلبيات السابقة ('+prev.length+')';
+  document.getElementById('hist-panel').style.display='none';
+}
+
+window.toggleHist = function(){
+  histOpen=!histOpen;
+  const p=document.getElementById('hist-panel');
+  p.style.display=histOpen?'block':'none';
+  if(!selCust)return;
+  const prev=orders.filter(o=>o.customer?.name===selCust.name);
+  document.getElementById('hist-lbl').textContent=histOpen?'اخفاء الطلبيات':'الطلبيات السابقة ('+prev.length+')';
+  if(histOpen){ p.innerHTML='<div style="font-size:11px;color:var(--gold);margin-bottom:6px">الطلبيات السابقة</div>'+prev.slice(0,6).map(o=>`<div class="history-item"><span>${o.date||''} - ${o.product||'منتج'}</span><span style="color:var(--gold)">${o.priceIQD?Math.round(o.priceIQD).toLocaleString('en-US')+' IQD':'-'}</span></div>`).join('')+(prev.length>6?'<div style="font-size:10px;color:var(--text-muted);padding-top:4px">+ '+(prev.length-6)+' طلبية اخرى</div>':''); }
+}
+
+// --- Save order to Firestore ---
+window.saveOrder = async function(){
+  const r=getR(); if(!r){openRateModal();return;}
+  let cust;
+  if(ctype==='old'){if(!selCust){alert('اختر عميل من القائمة');return;}cust=selCust;}
+  else{
+    const n=document.getElementById('nc-name').value.trim();
+    if(!n){alert('ادخل اسم العميل');return;}
+    cust={name:n,ig:document.getElementById('nc-ig').value.trim(),phone:document.getElementById('nc-ph').value.trim(),location:document.getElementById('nc-loc').value.trim()};
+    if(!customers.find(c=>c.name===cust.name&&c.phone===cust.phone)){customers.push(cust);localStorage.setItem('de_c',JSON.stringify(customers));}
+  }
+  const tl=parseFloat(document.getElementById('price-tl').value)||0;
+  if(!tl){alert('ادخل سعر الليرة');return;}
+  const pr=parseFloat(document.getElementById('profit').value)||0;
+  const iqd=Math.round(tl*r+pr);
+  const order={
+    date: new Date().toLocaleDateString('ar-IQ'),
+    createdAt: Date.now(),
+    customer: cust,
+    priceTL: tl, profit: pr,
+    profitNote: document.getElementById('profit-note').value.trim(),
+    priceIQD: iqd,
+    brand: document.getElementById('prod-brand').value.trim(),
+    qty: parseInt(document.getElementById('prod-qty').value)||1,
+    product: document.getElementById('prod-name').value.trim(),
+    link: document.getElementById('prod-link').value.trim(),
+    status: document.getElementById('o-status').value,
+    notes: document.getElementById('o-notes').value.trim(),
+    rate: r
+  };
+  try{
+    await addDoc(collection(db,'orders'), order);
+    lastCust=cust;
+    document.getElementById('order-form').style.display='none';
+    document.getElementById('suc-banner').style.display='block';
+    window.scrollTo(0,0);
+  } catch(e){ alert('خطأ في الحفظ: '+e.message); }
+}
+
+window.sameCust = function(){
+  document.getElementById('suc-banner').style.display='none';
+  document.getElementById('order-form').style.display='block';
+  selType('old'); selCust=lastCust;
+  document.getElementById('search-inp').value=lastCust.name;
+  document.getElementById('fi').style.display='block';
+  document.getElementById('fi-name').textContent=lastCust.name||'-';
+  document.getElementById('fi-ig').textContent=lastCust.ig||'-';
+  document.getElementById('fi-ph').textContent=lastCust.phone||'-';
+  document.getElementById('fi-loc').textContent=lastCust.location||'-';
+  ['price-tl','profit','profit-note','prod-name','prod-brand','prod-link','o-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('prod-qty').value='1';
+  document.getElementById('price-box').style.display='none';
+  document.getElementById('o-status').value='pending';
+}
+
+window.freshOrder = function(){
+  document.getElementById('suc-banner').style.display='none';
+  document.getElementById('order-form').style.display='block';
+  selCust=null;
+  ['price-tl','profit','profit-note','prod-name','prod-brand','prod-link','o-notes','nc-name','nc-ig','nc-ph','nc-loc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';}); document.getElementById('prod-qty').value='1';
+  document.getElementById('price-box').style.display='none';
+  document.getElementById('o-status').value='pending';
+  selType('old');
+}
+
+// --- Render orders ---
+function stL(s){ const m={pending:'b-pending',confirmed:'b-confirmed',shipped:'b-shipped',delivered:'b-delivered'}; const t={pending:'انتظار',confirmed:'مؤكدة',shipped:'مشحونة',delivered:'مسلمة'}; return '<span class="badge '+( m[s]||'b-pending')+'">'+( t[s]||s)+'</span>'; }
+
+window.renderOrders = function(){
+  const q=(document.getElementById('o-search')?.value||'').toLowerCase();
+  const sf=document.getElementById('o-filter')?.value||'';
+  const fl=orders.filter(o=>(!q||(o.customer?.name||'').toLowerCase().includes(q))&&(!sf||o.status===sf));
+  const list=document.getElementById('orders-list');
+  if(!fl.length){list.innerHTML='<div class="empty"><i class="ti ti-shopping-bag"></i>لا توجد طلبيات</div>';updateStats();return;}
+  list.innerHTML=fl.map(o=>`<div class="order-card"><div style="display:flex;align-items:center;justify-content:space-between"><div style="flex:1;min-width:0"><div class="order-name">${o.customer?.name||'-'}</div><div class="order-meta">${o.date||''} - ${o.customer?.location||''}</div>${(o.brand||o.product)?'<div style="font-size:11px;color:var(--text-muted);margin-top:2px">'+(o.brand?'<span style="color:var(--gold-dark)">'+o.brand+'</span>'+(o.product?' — ':''):'')+(o.product||'')+(o.qty&&o.qty>1?' <span style="color:var(--gold);font-weight:600">x'+o.qty+'</span>':'')+'</div>':''} ${stL(o.status)}</div><div style="text-align:right;flex-shrink:0;padding-right:4px"><div class="order-price">${o.priceIQD?Math.round(o.priceIQD).toLocaleString('en-US'):''}</div><div style="font-size:10px;color:var(--text-muted)">IQD</div><div style="font-size:11px;color:var(--text-muted)">${o.priceTL||''}TL</div><button onclick="delOrder('${o._id}')" style="background:none;border:none;color:rgba(201,168,76,0.3);font-size:16px;cursor:pointer;margin-top:4px"><i class="ti ti-trash"></i></button></div></div></div>`).join('');
+  updateStats();
+}
+
+function updateStats(){
+  const tot=orders.length; const pend=orders.filter(o=>o.status==='pending').length;
+  const tIQD=orders.reduce((s,o)=>s+(o.priceIQD||0),0); const tTL=orders.reduce((s,o)=>s+(o.priceTL||0),0);
+  document.getElementById('stats').innerHTML=`<div class="stat"><div class="stat-label">اجمالي الطلبيات</div><div class="stat-val">${tot}</div></div><div class="stat"><div class="stat-label">قيد الانتظار</div><div class="stat-val">${pend}</div></div><div class="stat"><div class="stat-label">مبيعات IQD</div><div class="stat-val" style="font-size:13px">${Math.round(tIQD).toLocaleString('en-US')}</div></div><div class="stat"><div class="stat-label">مبيعات TL</div><div class="stat-val">${Math.round(tTL).toLocaleString('en-US')}</div></div>`;
+}
+
+window.delOrder = async function(id){
+  if(!confirm('حذف الطلبية؟'))return;
+  try{ await deleteDoc(doc(db,'orders',id)); } catch(e){ alert('خطأ في الحذف'); }
+}
+
+// --- Export Excel ---
+window.exportXL = function(){
+  if(!orders.length){alert('لا توجد طلبيات');return;}
+  const rows=[...orders].reverse().map(o=>({'التاريخ':o.date,'الاسم':o.customer?.name||'','الانستقرام':o.customer?.ig||'','الهاتف':o.customer?.phone||'','المكان':o.customer?.location||'','البراند':o.brand||'','المنتج':o.product||'','العدد':o.qty||1,'رابط المنتج':o.link||'','سعر TL':o.priceTL||0,'هامش الربح IQD':o.profit||0,'السعر الكلي IQD':o.priceIQD||0,'الحالة':{pending:'قيد الانتظار',confirmed:'مؤكدة',shipped:'مشحونة',delivered:'مسلمة'}[o.status]||o.status,'ملاحظات':o.notes||'','ملاحظة الربح':o.profitNote||''}));
+  const ws=XLSX.utils.json_to_sheet(rows); const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'الطلبيات');
+  XLSX.writeFile(wb,'Duhok_Elegancy_'+new Date().toLocaleDateString('ar-IQ').replace(/\//g,'-')+'.xlsx');
+}
+
+// --- Import customers ---
+window.importXL = function(inp){
+  const f=inp.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'}); let all=[];
+      wb.SheetNames.forEach(sn=>{ const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:''}); rows.forEach(row=>{ const keys=Object.keys(row); const nk=keys.find(k=>k.includes('اسم')||k.toLowerCase().includes('name')); const ik=keys.find(k=>k.includes('انستقرام')||k.toLowerCase().includes('ig')||k.toLowerCase().includes('instagram')); const pk=keys.find(k=>k.includes('هاتف')||k.toLowerCase().includes('phone')); const lk=keys.find(k=>k.includes('مكان')||k.toLowerCase().includes('location')); if(nk&&String(row[nk]).trim())all.push({name:String(row[nk]||'').trim(),ig:String(row[ik]||'').trim(),phone:String(row[pk]||'').trim(),location:String(row[lk]||'').trim()}); }); });
+      const before=customers.length; all.forEach(nc=>{if(!customers.find(c=>c.name===nc.name&&c.phone===nc.phone))customers.push(nc);}); localStorage.setItem('de_c',JSON.stringify(customers)); renderCustomers(); alert('تم استيراد '+(customers.length-before)+' عميل جديد');
+    }catch(err){alert('خطأ: '+err.message);}
+  }; reader.readAsBinaryString(f);
+}
+
+// --- Render customers ---
+window.renderCustomers = function(){
+  document.getElementById('cust-count').textContent=customers.length+' عميل محفوظ';
+  const list=document.getElementById('cust-list');
+  list.innerHTML=customers.slice(0,80).map(c=>`<div class="cust-card"><div class="avatar">${(c.name||'?')[0]}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--gold-light)">${c.name||'-'}</div><div style="font-size:11px;color:var(--text-muted)">${c.ig||''} - ${c.phone||''}</div><div style="font-size:11px;color:var(--text-muted)">${c.location||''}</div></div></div>`).join('');
+  if(customers.length>80)list.innerHTML+='<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:8px">يعرض اول 80 من '+customers.length+'</div>';
+}
+
+
+// Brand autocomplete
+const BRANDS = ["1001lead", "2 face", "2AS", "34Center", "37Numara", "3RD", "4 Kids", "7afiz", "ABAS", "Abra", "Abrra", "ABS", "ACAR", "ACS", "Ada", "Ada bebek", "adan kids", "Adidas", "ADIL", "Adipa", "ADL", "Afish Boutiq", "Aisha", "Ajar", "Akso", "Aksoloti", "aksoz tasarin", "aktapa group", "Akwa", "AL Home", "Al Pacha", "Alacati", "alamdar", "Alas", "Albeto", "Aldo", "alem home", "Alexandar", "Alim Home", "aliteki", "Aliya", "All Avcil", "ALM home", "Alpacha", "alpar", "Alschati", "altenolok", "Altin Yaldiz", "Altonhome", "altonmon", "Alves", "Always", "Alya", "Alyan Sevim", "Anadola saray", "Anadolo", "anaka", "Anastasia", "Angel", "Anglina", "Anjela", "Anne", "Antab", "Antap Bazari", "Aqulla", "arban care", "Arboon", "Arcelik", "Ardam", "Arel store", "Argvit", "Ariso", "Arjelic", "Arkorok", "armanda", "Armani", "Armonica", "Armonika", "Aro", "Aromatika", "arow", "Artesh", "arz home", "Arzom", "Asl", "ASL Concipt", "Atakint", "atolye", "atolye prove", "atsheri", "AVA", "Avva", "Aya capi", "Ayden", "Aydogan", "ayhan home", "Aymoda", "aynak", "Aysan", "aysho", "Ayybuu", "babels", "baby Conford", "baby door", "Baby gem", "Baby Giz", "baby gym", "baby londi", "baby room", "Baby roze", "baby soft", "baby tweety", "Bahcam", "Bahels", "Baio Oil", "Bakeruzo", "Balak Bak", "balkan", "Baltaci", "Bambi", "bambom", "Bambum", "Barbi", "Bartila Home", "bashak", "Batani", "Batitse", "batman", "Batrobell", "bave", "Bay Novala", "Bayaz", "bayda home", "Baykar", "Bayman", "Baymen", "Baysuz", "Baz", "BC Home", "bebekkuda", "beki live", "BEKI STORE", "Belamation", "Belkizin", "Bella", "Bellamation", "belle", "belo", "Bemotive", "Beniton", "Bereshka", "berin kids", "Bernardo", "Bershka", "Best Luck", "bestway", "Beuity Of junsiyan", "Beyman", "Beymen", "Beyond", "Bibantol", "Bibe zone", "bibps", "Bibs", "bigdart", "Bike Life", "Bimbam", "Bimbambum", "BINO", "Bio Kirateen", "bio oil", "Bioderma", "Bisa", "Biyanko", "biyanko losi", "biyoxeen", "bizon", "Black One", "Blotler", "Blutler", "BLY", "Bobi Still", "bofigo", "Boflina", "Boi Oil", "Boka", "Bokimon", "Bolutlar", "Bombi", "Bombom", "Book", "BOSS", "Boster Desgin", "botadige", "Boutiq kolik", "Boutiqe case", "Boutiqe jaylan", "boutiqet", "BOYA", "Breshka", "Brics", "Bronzi", "BRSCIOM", "BSM", "buendiakids", "Buharat", "Buharti", "bumbi", "bursa porsalin", "By Ayman", "By Hazeran", "By mistro", "By Nav", "By selin", "By Smile", "By soz", "Byemen", "bykar", "Bynes", "Bysuz", "Caff Home", "Cakra", "Canbay", "Capone", "caramel", "Carniel", "Cendi", "Cera", "Cestpiono", "Ceyo", "chacha ros", "Chaise bahcasi", "Chakra", "Channel", "chanta", "chantapak", "Chato Yand", "Chebo", "Cheepo", "Chiccy", "chichk", "chiken", "chiko", "chipo", "chirkef", "Cholfa", "Cime", "Circle toyes", "Cirpan", "ciyo", "cize the day", "Ck", "Clarins", "class Inlove", "clif", "clinec", "Clinic", "Colombia", "color sucks", "Comotomo", "Convers", "Converse", "Cool&Sexy", "creamko", "cresstiyes", "Cross", "CSP", "CuzCan", "Cuzmet", "Cyatelier", "D&R", "D.Olex", "Dagi", "Daily tech", "Daimood", "daksis", "Daleen", "DAMAT", "davi nes", "Davines", "Davins Oi", "davrezaman", "Dawrez", "Decomia Home", "Defacto", "Deigo", "dekorest", "Delvin", "demi graff", "Denfa", "denigo", "Dens house", "Deri Mood", "Deri Papik", "DeriMod", "Derin Kids", "derya", "Designe", "Devinka", "DID pazel", "DIEN", "Difacto", "difar", "Digit Home", "Dija", "Dika More", "Dikomia", "Dikopano", "Dinego", "Dino Kids", "Divolua", "Divonet", "Diy Box", "DJ Media", "DK", "DKNY", "Dmonter", "Doctor Gusto", "Doctor Otker", "domotive", "Dotamess", "dove", "Dowaldan", "Dowan", "DOXGER", "Dr.com", "DR.OZ", "dream 3rd", "Dream Like", "dream read", "Drese Home", "Duyt Skin", "dynamic", "Ebay Matal", "edelfo", "Ejer", "ejerci", "Eka", "Ekia", "Eklim", "Ekoniks", "el amdar", "Elart", "Elbay", "Elbi", "Eledor", "elef designe", "Elegant", "Elgihome", "Elia Pemi", "Elif Designe", "Elika", "ELINA BABY", "elison home", "Elkamist", "ella", "ellas", "Elle", "Elmas", "elo licha", "eltaros", "Elzam", "Ema Jocok", "emer shows", "Emka", "Emor for Home", "Emsan", "Emtore Home", "Emtori", "ENC Home", "Enfain", "Engiland london", "English Home", "enlora home", "Enti", "Epek", "eprila", "Eptoys", "eqinox", "Equal", "Ervalina", "ervanin", "Esana", "Ese Moda", "esenses", "Eshil", "Essana", "Essence", "Esyaman", "Ethiquet", "etiech", "ETIK man", "Ev style", "Evle", "Evry dinesh", "EWS", "Excucme", "extra", "Eye Hair", "Eye of hours", "Ezmir", "Fabics", "Facelaap", "Fairy", "Faiza", "fame back", "famous", "favorist", "FBZ Home", "febo", "Feebo", "feet green", "felekostel", "fendi", "Feni room", "Fenti", "ferdis", "Fibax", "fico home", "fine room", "fiyonek", "FliX care", "Flix Styel", "Flormal", "flormar", "Flower", "Forc shows", "Forex", "Fox Showes", "fox shows", "friensd", "Frocess", "fullrain", "funny baby", "FYK", "Gabrine", "galashop", "Gant", "GAP", "Gavazi", "gaziantap", "GB", "Gelink", "gengeli", "Geniues", "Genuies", "Gezer", "gezmle", "GHASSY", "Gi vayo", "Gift sofan", "gigt", "gizi boutiq", "Glamis", "Glasy Home", "Glouri", "GM", "GM boutiq", "Go dekor", "Go Max", "Godiva", "Gofil", "gold", "Gold Class", "Golden", "goldi", "Gorin Boss", "Gorjo Glass", "Gorsin", "Gower", "Grand bazar", "grats", "Gre kirchechek", "Greenj", "Gremilank", "Gremy land", "Grenj", "Gucci", "Guchen", "Guess", "Guest", "Guhev", "Gujlo", "Gukosagi", "Gulco", "Guler", "Gundare", "Gural Porsalin", "Gusess", "Gusto", "Guzerte", "H&B", "H&E Designe", "H&M", "Hadeya", "Hafiz", "Halat Dikor", "Halzi", "Hamur", "Happiness", "Happy Nes", "Happy Ness", "Happyness", "Happynies", "happynis", "harika", "Havali", "havali tasarim", "Hayal", "hayaten", "Hazila", "hazin", "Hear ness", "hell", "Hello baby", "hemi designe", "HEQA", "herch", "Herdikor", "Heritage", "Heritaj", "Herra", "hetimach", "Hetk", "Hey man", "Hifa", "High Moda", "highnewration", "Highnutarion", "HM Designe", "HNC", "Hobby", "Hokso", "Home designe", "Home Miya", "honey mis", "Honjye", "Hotic", "House Of selk", "Hozor", "hubina", "Huda Beauty", "Huggy", "Hugo Boss", "Hummel", "Humur", "HyggeFoods", "Ibro", "Ikea", "Ikia", "iko form", "Ikon", "Imea Home", "Indiko", "inowesta", "intersor", "Ipekyol", "Isana", "Italyano", "jack men", "jack moda", "Jack&Jones", "Jackback", "jajo baby", "Jamdale", "Jamila", "janes", "Jango", "Javdar", "jeber", "Jele Kat", "Jemmy key", "Jemy Key", "Jemykey", "Jenius", "Jiber", "jiko", "Jimmy key", "Jizje", "Jizya", "John ezback", "Johnson", "Jojo Baby", "jorab", "Jose", "JT", "Juli shop", "Jumbo", "Just One", "juste", "Juuta", "JWIN", "Kaff", "Kahva Dunyasi", "Kahvadunyasi", "kahvadunysi", "KAI Home", "kaktos kidi", "Kalabak", "kapak home", "kapania", "kapin", "Kapon", "Karaca", "karali", "Karamel", "karamela0", "Kardashler", "karel", "karl", "karlagerfeti", "Kartier", "Kartiyes", "Kasa Karina", "Kataya", "Kate Louis", "Katya Boni", "kayom", "kayran", "KBK Market", "KDM", "Kekaw", "Kelebak", "kent", "Keryatole", "Khakma", "KHAR", "Kidmarc", "Kids", "Kids bot", "Kids by fizza", "Kigile", "Kigle", "Kiko", "Kilve", "kimiko", "king mop", "King toyes", "KIO", "Kiome", "Kiremika", "Kitchen Buty", "Kitchen Live", "Kitchen store", "KITTE", "Kiwi", "Klit", "KM home", "kocak", "Kocher Home", "kocok", "kokix", "kokosix", "Kom", "Konfor", "Kopakiz", "kopop", "Korkomas", "Korkomaz", "kosova", "Kostabek", "Kostomas", "Kotahya", "Koteve", "Kotex", "Koton", "Koton Hil", "Koyahya", "Kozart", "Kozmo", "kraca", "Kraft", "Krelin team", "Kumtel", "KZN Home", "lacost", "Lacoste", "Lact", "Ladin", "Laent", "Lakasi", "lala", "Lamdam", "Laminta", "lansino", "Lav", "Lavida", "LC Wakiki", "Leaders", "Lee", "LEGO", "lela", "Lemon", "Len", "lenterna", "leo baby room", "Leona Para", "Leonas", "Letolile", "Levis", "Lides Home", "Life Care", "Likapa", "lila", "lila beo", "Lila Ech", "lila rose", "Lilabyo", "Lilach", "lilas", "lilbu", "Liliko", "Lilya Home", "Limon", "Lin", "Linens", "Linnens", "Lionar kasa", "liones", "Lions", "Liotole", "lipton", "Lisia Home", "litle jon", "Lives", "livonia", "liya kids", "loderlona", "Lofian", "Logi", "Logmo", "Lominark", "London", "Lora Mobilya", "Lorial", "lorila", "Loryal", "Los Jos", "lothian", "Lotos Plus", "loviko", "Lox", "loz and brilant", "LTB", "Lucky Art", "Luis Viton", "Luminark", "Lunoart", "Luvi", "M lora", "Mac", "Machka", "macka", "madalina", "Madam Coco", "Madam mix", "Maflin", "Magazadanal", "Magu", "Mainela", "mainores", "makam", "makeup time", "makron", "mamas", "Manga", "Mango", "manor", "Marjateli", "Marjin", "Mark&Spenser", "marpino", "Marshal", "Marvia home", "Masho trend", "Mashor", "Masimo Duty", "Masimu Duty", "Maskernao", "massboutiq", "Massimo Dutti", "Matelya", "Mavi", "maxiway", "Maybeline", "Maybelline", "maybilen", "Maybilne", "Mayori", "MBA", "MD", "Mdam coco", "Mdex", "mebyline", "Mega", "mega shamsiya", "Mei Mekyaj", "Meline", "Melinza", "melkemer", "melo", "Menix", "meralap", "Mercy", "merimeri", "Merlin", "merT", "meryan", "messi", "Mest", "Meta", "Metalek", "metalshop", "Metshin", "Meybilne", "Meybine", "MFG", "MGS", "MH", "Migaza", "Mikasamor", "Milesh Bebe", "milsland", "Mime", "mimo", "mina ropa", "Minatserem", "Mine Kids", "mine trend", "mine trends", "MINIK", "Minyal", "Misha", "Mislena", "Miss Dunya", "Miss Ipekyol", "miss piga", "Miss swan", "Missing", "Mitro", "miya baby", "Miya Bampi", "miyo gusto", "MJSZ", "Mline Home", "Mobitel", "Mochkan", "Moda", "Moda Bicher", "moda boymos", "moda dezgine", "moda diyala", "Moda Geen", "Moda Gusto", "Moda Lady", "Moda Morf", "Moda yes", "Modafa", "modavinko", "Modayel", "Modaymish", "Modesa", "Modest", "Modo", "Modo Concept", "Modren avent", "Modu Concept", "Mogo", "Moji", "moka sine", "molvix", "Momy blise", "Monako", "monila", "Monora", "Mons", "Monsiler", "Monstar", "Moodcase", "moon Girl", "moor", "moor desinge", "More Grden", "Morka", "morning", "morpone", "Mosi", "Mostela", "Motis", "Motlo city", "Mow Home", "Moya", "Moye", "Mraton", "MRY", "Mudo Concept", "Muggo", "Munbe", "Mustela", "my block", "my hobi", "my perla", "My Saraciye", "My topok", "mybine", "mystore", "naheer", "najar", "Nakka", "Name", "nandi home", "nano", "NARS", "Nascita", "nashli", "Nashly", "Nataniven", "nationa geografic", "National G", "nazli", "nesil boutiq", "Nespreso", "net moda", "Net Tofet", "Netenevem", "Netrogin", "Network", "Neutrogena", "new lela", "next baby", "Nice", "Night Light", "Nike", "nil wood", "Nill", "NiMolix", "Nine west", "Nineta", "ninewest", "Nisa", "Nisan tasi", "Nishan tasi", "Niuration", "Nivea", "Nivia", "Nixes", "Niyon", "No Name", "Nona Mino", "Nor Girl", "Norgaz", "norhan home", "norjem", "North Face", "North London", "nosel", "Note", "nutration", "NYX", "Nza", "Obi", "Obje", "Oda store", "Odis", "ofbox", "Oisho", "Olailun", "Olalak", "Olalok", "Olaluk", "Olchay", "OM", "omi", "omron", "On the cloud", "Only", "Only Kaden", "Only Mond", "Optimum", "Oqyan Care", "Oqyanos", "Oqyanos Home", "Ordiner", "orfiyo", "Oserin", "Osmanli", "Oso", "otachi", "OtAJI", "Otako", "Otic", "OWWOTEECH", "Oysho", "Oyso", "Ozsa", "Page", "pagy", "Palet", "Palmo leiv", "Palmolive", "Pampi", "panda", "panjo", "PAR", "Parex", "Paris", "Paris Live", "parker", "Parti", "party", "party dokanem", "Party Dolabe", "party dolaby", "Party Dolo", "Pasa Bahca", "Pasabahca", "Pasaci", "pastil", "Pataya", "paterion", "Patiko", "Patine", "patiswis", "paul&bear", "paul&beer", "Pejama evi", "Pek Shop", "pelen", "Pelow vela", "peni mode", "Penti", "Penva Mavi", "pepstoudio", "perndi", "Peroti", "Phelips", "phileps", "Philpes", "Philps", "Phliper", "Pier Baby", "Pier Garden", "PierGarden", "Pierre Carden", "Pierre cardin", "Pinko", "Pixa", "PLN", "plus Exeswar", "podiom", "point o2", "Polka Store", "Polo", "pols organik", "Porcak", "Porcoz", "Porland", "Porsalin", "Porsalinda", "PortBag", "poset", "Poul&Bear", "Poul&Shark", "Pown", "Pual&Bear", "pulka", "Pull&Bear", "PUMA", "Puya", "pwel mark", "Qawins", "Quertiz", "Quin", "Quzo", "Rabi", "Rabo", "Raibun", "rainbu", "Rakle", "Rakli", "Rayban", "Raymanar", "Real Home", "Rear Beuity", "Rek home", "RekHome", "Rekotars", "remanmansis", "remesa", "Remin g tone", "Retmo Home", "Revilotion", "Rexona", "Reynes", "reyome", "roba", "robe ve", "Robery", "Roi King", "Roli poli", "Rolipoli", "Romiya Home", "Ros Toy", "Rose", "Rossev", "Roviko", "Rowenta", "Roxna", "Royaa", "Roz Boutiq", "roza home", "Run Nutioin", "Run Nutriotion", "Rybun", "S leader", "Saade", "saje", "Salomon", "Samsa", "SARO", "Satin", "Sayman", "Saymon", "Sayranat", "SB Home", "Schafeer", "Schkers", "Schulzz", "Sckecers", "Sckercers", "Sebetci", "sebeteci", "sebostan", "seda yalcim", "Sefora", "Segma", "Sekechers", "Sel kokon", "selin show", "Seline shows", "seljoq", "Semrex", "Sepenta", "SEPHORA", "sept", "septol", "Sera", "serple", "Serstil", "Setween", "sevaberk", "seve baby", "Sevenc", "Sevil baby", "Sevil boy", "Sevil Girl", "sevile baby", "sexis", "ShaisMono", "Shaka", "Shakrak", "She&Co", "sherin", "Shibo", "sholebag", "shols", "Shopier", "showy Boutiq", "Signal", "Sikotlet", "Silver home", "sim", "sinoz", "sivel baby", "Siyah", "siyah enci", "Siyah Inci", "siyahinci", "skal", "Skechers", "Skin", "Sky go", "Slazinger", "Sleepy", "sodo cream", "Soila", "Soje", "Sok siyon", "Sono Argan", "Sono Blonder", "Sontel", "Sorpay", "Sosial", "Soso Home", "Sosyete", "sotlo", "Sport Evi", "SS", "stamo", "Starbucks", "StarBux", "Stel Diva", "Stela", "Stella", "stere", "sTerna", "Sticker", "Stock", "store", "Story", "stradeviros", "Stradevirous", "Stradivarius", "stradivros", "Stranwas", "strasone", "Strawberry", "Sucks", "suli", "Sumer", "supra dina", "Suwem", "Swarovski", "Swarovsli", "Swat", "swavenix", "sween", "swetes", "SYD", "SYT", "tabason", "Taj", "Tamy ris", "tardis", "tarot", "tasarim", "tatli Gunler", "Tazbih", "Tbdizayn", "tek tishert", "temak", "TEN", "teni lamp", "tenyweni", "tethome", "tha kalt rose", "The body shop", "The Cult Rosa", "The jojo", "The Mia", "The North Face", "the pure", "tikaradak", "Tilsim", "Tine lamp", "tiwist", "TM toye", "Todors", "Todros", "tolo", "tolo porsalin", "Tommy Hilfeger", "Tommy Hilfiger", "Tomsking", "Tomy Hilfiger", "tomy tep", "Tomyhilfiger", "Toni black", "Tony Black", "TOO Faced", "Topic koyo", "topic sac", "tosbish", "Totko", "Tots Fulx", "Tower", "Toyash", "toyszaks", "tozvintak", "transfor", "trede", "Treline", "Trend", "Trend alacati", "Trendis", "Trends", "trendyol modiset", "Trindyol kids", "Trindyol man", "Trindyol Mila", "Trindyol Milla", "Trindyol Modest", "Trindyolkorve", "TrindyolMila", "TRN Jeans", "Tuahan", "Tuba", "Tuba boutiq", "Tuffex", "Tuhana", "Tujba", "turk", "TWIGY", "Twins", "Twist", "U.S Polo", "Ufo", "Ugan tarz", "Umak", "Unaystore", "Under Armore", "Under Armour", "Under&Armour", "UNI baby", "United Color", "United Colors", "Unlock", "Upfin Frama", "Urban", "URIAJE", "US Polo", "US.POLO", "Usares", "Ustaha", "Vago Need", "vagon", "Vakko", "Vako", "Valkine", "Vans", "Varbi", "Varta", "Vayniv", "Vectoria Secret", "Vendaita", "Venif", "Venoci", "verdem", "Versace", "Versaci", "Vetrin", "Vicco", "Vichy", "Victoria seceter", "Victoria Secret", "Victotia", "Vienev", "Viko", "vile zada", "Villa", "Vinteno", "VIP Cross", "vital", "viyamo", "Vogotima", "Vontar", "Wagon", "Walke", "wanix", "WC", "weel art", "weh baby", "well way", "wella home", "White West", "Wiya Work", "wiyana", "WK store", "Wood Home", "Xakma", "XHAN", "xolo", "Yalil", "Yapay cick", "Yargeca", "yargeja", "Yatash", "Yayahuc", "Yeepo", "You", "Your Home", "Yoyo", "yukyuk", "Yusra", "YVES", "YZ home", "Zara", "Zaraza", "ZBTEKS", "zeb kids", "Zegi Showes", "zeki shows", "zemtigo", "Zenjafeel", "zep kids", "zerdachal", "Zet planin", "zeyoss", "Zeyve", "Ziba", "zizi kostom", "Zogotlo", "Zombo", "ZZ Designe"];
+window.filterBrands = function(q) {
+  const el = document.getElementById('brand-suggestions');
+  if(!q || q.length < 1) { el.style.display='none'; return; }
+  const m = BRANDS.filter(b => b.toLowerCase().includes(q.toLowerCase())).slice(0,8);
+  if(!m.length) { el.style.display='none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = m.map(b => `<div style="padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border);color:var(--text)" onclick="selectBrand('${b}')" onmouseover="this.style.background='rgba(201,168,76,0.08)'" onmouseout="this.style.background='none'">${b}</div>`).join('');
+}
+window.selectBrand = function(b) {
+  document.getElementById('prod-brand').value = b;
+  document.getElementById('brand-suggestions').style.display = 'none';
+}
+
+// Init
+updateRateDisplay();
+if(!rateIQD) setTimeout(openRateModal, 800);
+setSyncStatus('connecting');
+</script>
+</body>
+</html>
