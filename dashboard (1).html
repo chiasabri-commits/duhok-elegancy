@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duhok Elegancy — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eceeed;--panel:#fff;--ink:#1d1a1f;--mute:#6f6a73;--plum:#3b1f3a;--brass:#b58a3c;--ok:#2e7d6b;--bad:#b4443c;--line:#d9dbda}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;line-height:1.6}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.hide{display:none!important}
+header{background:var(--plum);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{margin:0;font-size:1.15rem;font-weight:600;flex:1;min-width:180px}
+header button{background:transparent;border:1px solid #ffffff55;color:#fff;border-radius:6px;padding:4px 12px;cursor:pointer}
+header button:hover{background:#ffffff1f}
+main{max-width:1000px;margin:0 auto;padding:20px}
+#login{max-width:340px;margin:12vh auto;background:var(--panel);padding:28px;border-radius:10px;border:1px solid var(--line)}
+#login h2{margin:0 0 16px;font-size:1.2rem}
+#login input{width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:6px;direction:ltr;text-align:left}
+.primary{width:100%;background:var(--plum);color:#fff;border:0;border-radius:6px;padding:10px;cursor:pointer;font-weight:600}
+.err{color:var(--bad);min-height:1.4em;margin:8px 0 0;font-size:.9rem}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.bar select,.bar button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer}
+.bar .sp{flex:1}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.kpi.main{background:var(--plum);color:#fff;border-color:var(--plum);grid-column:1/-1}
+.kpi small{display:block;color:var(--mute);font-size:.85rem}
+.kpi.main small{color:#ffffffb3}
+.kpi b{font-size:1.6rem;font-weight:700;direction:ltr;display:inline-block}
+.kpi.main b{font-size:2.6rem;color:#f0d9a6}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:18px}
+.panel h3{margin:0 0 12px;font-size:1rem}
+.chart{display:flex;align-items:flex-end;gap:8px;height:180px;direction:ltr}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.col i{display:block;width:100%;background:var(--brass);border-radius:4px 4px 0 0;min-height:2px}
+.col span{font-size:.72rem;color:var(--mute);margin-top:4px}
+.col em{font-style:normal;font-size:.7rem;margin-bottom:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:700px){.two{grid-template-columns:1fr}.kpi.main b{font-size:2.1rem}}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:start}
+th{color:var(--mute);font-weight:500}
+td.n{direction:ltr;text-align:end}
+.wrap{overflow-x:auto}
+.empty{color:var(--mute);padding:8px 0}
+#st{color:var(--mute);font-size:.8rem}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <h2 data-i="title">Duhok Elegancy</h2>
+  <input id="em" type="email" placeholder="Email" autocomplete="username">
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="primary" id="go" data-i="signin">تسجيل الدخول</button>
+  <p class="err" id="lerr"></p>
+</section>
+
+<div id="app" class="hide">
+  <header>
+    <h1 data-i="title">Duhok Elegancy</h1>
+    <span id="st"></span>
+    <button id="lang">EN</button>
+    <button id="out" data-i="signout">خروج</button>
+  </header>
+  <main>
+    <div class="bar">
+      <select id="per" aria-label="period"></select>
+      <select id="cur" aria-label="currency"></select>
+      <span class="sp"></span>
+      <button id="csv" data-i="export">تصدير CSV</button>
+    </div>
+    <div class="kpis">
+      <div class="kpi main"><small data-i="rev">إجمالي الدخل</small><b id="k-rev">–</b></div>
+      <div class="kpi"><small data-i="ord">عدد الطلبات</small><b id="k-ord">–</b></div>
+      <div class="kpi"><small data-i="avg">متوسط الطلب</small><b id="k-avg">–</b></div>
+      <div class="kpi" id="pbox"><small data-i="profit">صافي الربح</small><b id="k-pro">–</b></div>
+    </div>
+    <div class="panel"><h3 data-i="monthly">الدخل الشهري</h3><div class="chart" id="chart"></div></div>
+    <div class="two">
+      <div class="panel"><h3 data-i="top">الأكثر مبيعاً</h3><div id="top"></div></div>
+      <div class="panel"><h3 data-i="recent">آخر الطلبات</h3><div class="wrap" id="recent"></div></div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ============ 1) EDIT THIS BLOCK ============ */
+const FIREBASE = {
+  apiKey: "AIzaSyCGgd_foQe48nLSnMzowG_yQpxxdE5zJew",
+  authDomain: "duhok-elegancy.firebaseapp.com",
+  projectId: "duhok-elegancy",
+  storageBucket: "duhok-elegancy.firebasestorage.app",
+  messagingSenderId: "537646867270",
+  appId: "1:537646867270:web:95c8236d7602710791bb47"
+};
+const CFG = {
+  collection:"orders",                 // Firestore collection name
+  fields:{date:"createdAt", total:"total", cost:"cost", currency:"currency",
+          status:"status", customer:"customerName", product:"product", items:"items"},
+  excludeStatuses:["cancelled","canceled","returned"],
+  defaultCurrency:"USD",
+  // units of each currency per 1 USD — update when rates move
+  rates:{USD:1, IQD:1310, TRY:41, EUR:0.86}
+};
+/* ============================================== */
+
+const T={
+ ar:{title:"Duhok Elegancy",signin:"تسجيل الدخول",signout:"خروج",export:"تصدير CSV",rev:"إجمالي الدخل",ord:"عدد الطلبات",avg:"متوسط الطلب",profit:"صافي الربح",monthly:"الدخل الشهري",top:"الأكثر مبيعاً",recent:"آخر الطلبات",
+  p:{month:"هذا الشهر",last:"الشهر الماضي",m3:"آخر 3 أشهر",year:"هذه السنة",all:"كل الوقت"},
+  date:"التاريخ",cust:"الزبون",stat:"الحالة",amt:"المبلغ",none:"لا توجد بيانات في هذه الفترة.",live:"مباشر",bad:"البريد أو كلمة المرور غير صحيحة.",perm:"لا تملك صلاحية عرض البيانات.",ord_s:"طلب"},
+ en:{title:"Duhok Elegancy",signin:"Sign in",signout:"Sign out",export:"Export CSV",rev:"Total revenue",ord:"Orders",avg:"Average order",profit:"Net profit",monthly:"Monthly revenue",top:"Best sellers",recent:"Recent orders",
+  p:{month:"This month",last:"Last month",m3:"Last 3 months",year:"This year",all:"All time"},
+  date:"Date",cust:"Customer",stat:"Status",amt:"Amount",none:"No data in this period.",live:"Live",bad:"Wrong email or password.",perm:"You don't have permission to view this data.",ord_s:"orders"}
+};
+let lang=localStorage.getItem("de-lang")||"ar", orders=[];
+const $=id=>document.getElementById(id);
+const fmt=(n,c)=>new Intl.NumberFormat("en-US",{maximumFractionDigits:c==="IQD"?0:2}).format(n);
+
+const app=initializeApp(FIREBASE), auth=getAuth(app), db=getFirestore(app);
+let unsub=null;
+
+$("go").onclick=()=>signInWithEmailAndPassword(auth,$("em").value.trim(),$("pw").value)
+  .catch(()=>$("lerr").textContent=T[lang].bad);
+$("pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("go").click()});
+$("out").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,u=>{
+  $("login").classList.toggle("hide",!!u); $("app").classList.toggle("hide",!u);
+  if(unsub){unsub();unsub=null}
+  if(!u){orders=[];return}
+  unsub=onSnapshot(collection(db,CFG.collection),snap=>{
+    orders=snap.docs.map(d=>norm(d.data())); $("st").textContent="● "+T[lang].live; render();
+  },()=>{$("st").textContent=T[lang].perm});
+});
+
+function toDate(v){
+  if(!v)return null; if(v.toDate)return v.toDate();
+  const d=new Date(v); return isNaN(d)?null:d;
+}
+function norm(r){
+  const f=CFG.fields;
+  let prods=[]; const it=r[f.items];
+  if(Array.isArray(it)) prods=it.map(x=>x.name||x.product||x.title).filter(Boolean);
+  else if(r[f.product]) prods=[r[f.product]];
+  return {date:toDate(r[f.date]),total:+r[f.total]||0,cost:r[f.cost]==null?null:+r[f.cost],
+    cur:(r[f.currency]||CFG.defaultCurrency).toUpperCase(),status:String(r[f.status]||""),
+    cust:r[f.customer]||"",prods};
+}
+const conv=(v,from)=>v/(CFG.rates[from]||1)*(CFG.rates[$("cur").value]||1);
+
+function range(){
+  const n=new Date(),y=n.getFullYear(),m=n.getMonth();
+  switch($("per").value){
+    case"month":return[new Date(y,m,1),new Date(y,m+1,1)];
+    case"last":return[new Date(y,m-1,1),new Date(y,m,1)];
+    case"m3":return[new Date(y,m-2,1),new Date(y,m+1,1)];
+    case"year":return[new Date(y,0,1),new Date(y+1,0,1)];
+    default:return[new Date(0),new Date(9999,0,1)];
+  }
+}
+function filtered(){
+  const[a,b]=range(),ex=CFG.excludeStatuses;
+  return orders.filter(o=>o.date&&o.date>=a&&o.date<b&&!ex.includes(o.status.toLowerCase()))
+    .sort((x,y)=>y.date-x.date);
+}
+
+function render(){
+  const t=T[lang],c=$("cur").value,list=filtered();
+  const rev=list.reduce((s,o)=>s+conv(o.total,o.cur),0);
+  $("k-rev").textContent=fmt(rev,c)+" "+c;
+  $("k-ord").textContent=fmt(list.length,"IQD");
+  $("k-avg").textContent=list.length?fmt(rev/list.length,c)+" "+c:"–";
+  const withCost=list.filter(o=>o.cost!=null);
+  $("pbox").classList.toggle("hide",!withCost.length);
+  $("k-pro").textContent=fmt(withCost.reduce((s,o)=>s+conv(o.total-o.cost,o.cur),0),c)+" "+c;
+
+  // monthly chart
+  const by={}; list.forEach(o=>{const k=o.date.getFullYear()+"-"+String(o.date.getMonth()+1).padStart(2,"0");by[k]=(by[k]||0)+conv(o.total,o.cur)});
+  const keys=Object.keys(by).sort().slice(-12),max=Math.max(1,...keys.map(k=>by[k]));
+  $("chart").innerHTML=keys.length?keys.map(k=>`<div class="col"><em>${fmt(by[k],c)}</em><i style="height:${Math.max(2,by[k]/max*120)}px"></i><span>${k.slice(2)}</span></div>`).join(""):`<p class="empty">${t.none}</p>`;
+
+  // best sellers
+  const cnt={}; list.forEach(o=>o.prods.forEach(p=>cnt[p]=(cnt[p]||0)+1));
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  $("top").innerHTML=top.length?`<table>${top.map(([p,n])=>`<tr><td>${esc(p)}</td><td class="n">${n}</td></tr>`).join("")}</table>`:`<p class="empty">${t.none}</p>`;
+
+  // recent orders
+  $("recent").innerHTML=list.length?`<table><tr><th>${t.date}</th><th>${t.cust}</th><th>${t.stat}</th><th>${t.amt}</th></tr>${list.slice(0,10).map(o=>`<tr><td>${o.date.toLocaleDateString("en-GB")}</td><td>${esc(o.cust)}</td><td>${esc(o.status)}</td><td class="n">${fmt(conv(o.total,o.cur),c)}</td></tr>`).join("")}</table>`:`<p class="empty">${t.none}</p>`;
+}
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+
+$("csv").onclick=()=>{
+  const c=$("cur").value,rows=[["date","customer","status","products","amount_"+c]];
+  filtered().forEach(o=>rows.push([o.date.toISOString().slice(0,10),o.cust,o.status,o.prods.join(" / "),conv(o.total,o.cur).toFixed(2)]));
+  const csv="\ufeff"+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download="duhok-elegancy.csv";a.click();
+};
+
+function setLang(){
+  const t=T[lang];document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t[e.dataset.i]);
+  const pv=$("per").value||"month";
+  $("per").innerHTML=Object.entries(t.p).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");$("per").value=pv;
+  $("lang").textContent=lang==="ar"?"EN":"عربي";
+  render();
+}
+$("lang").onclick=()=>{lang=lang==="ar"?"en":"ar";localStorage.setItem("de-lang",lang);setLang()};
+$("cur").innerHTML=Object.keys(CFG.rates).map(k=>`<option>${k}</option>`).join("");
+$("cur").value=CFG.defaultCurrency;
+$("per").onchange=$("cur").onchange=render;
+setLang();
+</script>
+</body>
+</html>
